@@ -27,30 +27,23 @@ struct Heic: ParsableCommand {
             let source = CGImageSourceCreateWithURL(fromUrl as CFURL, nil)!
             let metadata =
                 CGImageSourceCopyPropertiesAtIndex(source, 0, nil)! as! [AnyHashable: Any]
-            // print("metadata:", metadata)
 
             let properties: NSMutableDictionary = [:]
             properties.addEntries(from: metadata)
+            properties[kCGImageDestinationLossyCompressionQuality] =
+                self.quality ?? (metadata[kCGImagePropertyDepth] as? Int ?? 0 > 8 ? 0.5 : 0.7)
 
             let destination = CGImageDestinationCreateWithURL(
                 toUrl as CFURL, AVFileType.heic as CFString, 1, nil)!
 
             switch fromUrl.pathExtension.uppercased() {
-            case "ARW", "CR2", "CR3", "NEF", "ORF", "PEF", "RAF", "RW2":
-                properties[kCGImageDestinationLossyCompressionQuality] = self.quality ?? 0.5
-
+            case "ARW", "CR2", "CR3", "NEF", "ORF", "PEF", "RAF", "RW2":  // Raw
                 let colorSpace = CGColorSpace(name: CGColorSpace.displayP3_PQ)!
                 let fromImage = CIImage(contentsOf: fromUrl, options: [.expandToHDR: true])!
                 let toImage = CIContext().createCGImage(
                     fromImage, from: fromImage.extent, format: .RGB10, colorSpace: colorSpace)!
-                CGImageDestinationAddImage(destination, toImage, properties as CFDictionary)
-
+                CGImageDestinationAddImage(destination, toImage, properties)
             default:
-                let quality =
-                    self.quality
-                    ?? (metadata[kCGImagePropertyDepth] as? Int ?? 0 > 8 ? 0.5 : 0.65)
-                properties[kCGImageDestinationLossyCompressionQuality] = quality
-
                 CGImageDestinationAddImageFromSource(destination, source, 0, properties)
             }
 
