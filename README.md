@@ -7,11 +7,11 @@ JPEG 용량은 너무 크고 내 iPhone, iPad, iCloud 용량은 너무 작은데
 ### Terminal
 
 ```shell
-heic (options) [images...]  
+heic [options] <images> ...
 ```
 
 - Options
-    * -q 압축 품질 (0 ~ 100, 기본: 65)
+    * -q 압축 품질 (0 ~ 100)
 
 ## 만드는데 도움을 주신 분들
 

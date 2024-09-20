@@ -11,14 +11,14 @@ import CoreImage
 
 @main
 struct Heic: ParsableCommand {
-    @Option(help: "Compress quality (0 ~ 100)")
+    @Option(name: .short, help: "Compress quality (0 ~ 100)")
     var quality: Double?
 
     @Argument(help: "Input image files")
-    var files: [String]
+    var images: [String]
 
     func run() throws {
-        for path in files {
+        for path in images {
             let fromUrl = URL(fileURLWithPath: path)
             let toUrl = fromUrl.deletingPathExtension().appendingPathExtension("HEIC")
 
